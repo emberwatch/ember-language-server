@@ -1,9 +1,10 @@
 'use strict';
 
-import { basename, dirname } from 'path';
+import { basename, dirname, join } from 'path';
 import { EventEmitter } from 'events';
 
 import FileIndex from './file-index';
+import emberAddons from './utils/ember-addons';
 
 export class Project {
   readonly fileIndex: FileIndex;
@@ -19,6 +20,7 @@ export default class ProjectRoots {
   projects = new Map<string, Project>();
 
   async initialize(workspaceRoot: string, watcher: EventEmitter) {
+
     this.workspaceRoot = workspaceRoot;
 
     let promise = new Promise(resolve => {
@@ -38,6 +40,12 @@ export default class ProjectRoots {
       });
     });
 
+    watcher.on('change', (path: string) => {
+      if (basename(path) === 'package.json') {
+        this.onPackageChange(dirname(path));
+      }
+    });
+
     watcher.on('unlink', (path: string) => {
       if (basename(path) === 'ember-cli-build.js') {
         this.onProjectDelete(dirname(path));
@@ -54,9 +62,31 @@ export default class ProjectRoots {
     await promise;
   }
 
-  onProjectAdd(path: string) {
-    console.log(`Ember CLI project added at ${path}`);
-    this.projects.set(path, new Project(path));
+  async onPackageChange(path: string) {
+
+    let project = this.projectForPath(path);
+    if (!project) { return; }
+
+    // TODO do this more efficient by only removing or adding addons if needed.
+    project.fileIndex.removeDirectory(join(path, 'node_modules'));
+
+    const addonsPaths = await emberAddons(path);
+
+    await Promise.all(addonsPaths.map((dirPath: string) =>
+      project!.fileIndex.addDirectory(dirPath))
+    );
+  }
+
+  async onProjectAdd(projectPath: string) {
+    let project = new Project(projectPath);
+
+    const addonsPaths = await emberAddons(projectPath);
+
+    await Promise.all(addonsPaths.map((dirPath: string) =>
+      project.fileIndex.addDirectory(dirPath))
+    );
+
+    this.projects.set(projectPath, project);
   }
 
   onProjectDelete(path: string) {

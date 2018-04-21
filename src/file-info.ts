@@ -13,10 +13,17 @@ export abstract class FileInfo {
       return;
     }
 
+    let expectedRoot = 'app';
     let pathParts = relativePath.split(path.sep);
+
+    if (pathParts[0] === 'node_modules') {
+      pathParts = pathParts.slice(2);
+      expectedRoot = 'addon';
+    }
+
     let sourceRoot = pathParts[0];
 
-    if (sourceRoot === 'app') {
+    if (sourceRoot === expectedRoot) {
       if (pathParts.length === 2) {
         // handle files in the source root
         return new MainFileInfo(relativePath, pathParts);
@@ -131,6 +138,10 @@ export class AcceptanceTestFileInfo extends TestFileInfo {
 }
 
 function removeExtension(nameParts: string[]) {
+  if (nameParts.length < 1) {
+    return [];
+  }
+
   let baseName = nameParts.pop() as string;
   let extension = path.extname(baseName);
   nameParts.push(baseName.substr(0, baseName.length - extension.length));
