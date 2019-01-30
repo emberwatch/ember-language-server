@@ -37,11 +37,14 @@ export default class DefinitionProvider {
       if (this.isComponentOrHelperName(focusPath)) {
         const componentOrHelperName = focusPath.node.original;
 
-        const templatePath = path.join(project.root, 'app', 'components', `${componentOrHelperName}.js`);
-        const componentPath = path.join(project.root, 'app', 'templates', 'components', `${componentOrHelperName}.hbs`);
-        const helperPath = path.join(project.root, 'app', 'helpers', `${componentOrHelperName}.js`);
+        const podComponentPath   = path.join(project.root, 'app', project.podRoot, 'components', componentOrHelperName, 'component.js');
+        const podTemplatePath    = path.join(project.root, 'app', project.podRoot, 'components', componentOrHelperName, 'template.hbs');
 
-        return pathsToLocations(templatePath, componentPath, helperPath);
+        const componentPath   = path.join(project.root, 'app', 'components', `${componentOrHelperName}.js`);
+        const templatePath    = path.join(project.root, 'app', 'templates', 'components', `${componentOrHelperName}.hbs`);
+        const helperPath      = path.join(project.root, 'app', 'helpers', `${componentOrHelperName}.js`);
+
+        return pathsToLocations(componentPath, templatePath, helperPath, podComponentPath, podTemplatePath);
       }
     } else if (extension === '.js') {
       let content = this.server.documents.get(uri).getText();
@@ -57,8 +60,9 @@ export default class DefinitionProvider {
         let modelName = astPath.node.value;
 
         const modelPath = path.join(project.root, 'app', 'models', `${modelName}.js`);
+        const podModelPath = path.join(project.root, 'app', project.podRoot, modelName, 'model.js');
 
-        return pathsToLocations(modelPath);
+        return pathsToLocations(modelPath, podModelPath);
       } else if (isTransformReference(astPath)) {
         let transformName = astPath.node.value;
 

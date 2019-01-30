@@ -7,7 +7,18 @@ const walkSync = require('walk-sync');
 
 export class Project {
 
-  constructor(public readonly root: string) {
+  public readonly root: string;
+  public readonly podRoot: string = '';
+
+  constructor(root: string) {
+
+    let env = require(join(root, 'config', 'environment.js'))();
+    const modulePrefix = env.modulePrefix || '';
+    const podModulePrefix = env.podModulePrefix || '';
+
+    this.root = root;
+    this.podRoot = podModulePrefix.replace(modulePrefix + '/', '');
+
   }
 }
 
