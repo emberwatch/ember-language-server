@@ -16,13 +16,14 @@ import {
 } from 'vscode-languageserver';
 
 import ProjectRoots from './project-roots';
-import DefinitionProvider from './definition-provider';
+import DefinitionProvider from './definition-providers/entry';
 import TemplateLinter from './template-linter';
 import DocumentSymbolProvider from './symbols/document-symbol-provider';
 import JSDocumentSymbolProvider from './symbols/js-document-symbol-provider';
 import HBSDocumentSymbolProvider from './symbols/hbs-document-symbol-provider';
 
 import TemplateCompletionProvider from './completion-provider/template-completion-provider';
+import ScriptCompletionProvider from  './completion-provider/script-completion-provider';
 import { uriToFilePath } from 'vscode-languageserver/lib/files';
 
 export default class Server {
@@ -43,6 +44,7 @@ export default class Server {
   ];
 
   templateCompletionProvider: TemplateCompletionProvider = new TemplateCompletionProvider(this);
+  scriptCompletionProvider: ScriptCompletionProvider = new ScriptCompletionProvider(this);
 
   definitionProvider: DefinitionProvider = new DefinitionProvider(this);
 
@@ -60,6 +62,16 @@ export default class Server {
     this.connection.onDocumentSymbol(this.onDocumentSymbol.bind(this));
     this.connection.onDefinition(this.definitionProvider.handler);
     this.connection.onCompletion(this.onCompletion.bind(this));
+    // 'els.showStatusBarText'
+
+    // let params: ExecuteCommandParams = {
+      // command,
+      // arguments: args
+    // };
+    // return client.sendRequest(ExecuteCommandRequest.type, params)
+
+    // this.connection.client.sendRequest()
+    // this.connection.onEx
   }
 
   listen() {
@@ -79,21 +91,24 @@ export default class Server {
 
     this.projectRoots.initialize(rootPath);
 
+    // this.setStatusText('Initialized');
+
     return {
       capabilities: {
         // Tell the client that the server works in FULL text document sync mode
         textDocumentSync: this.documents.syncKind,
-
         definitionProvider: true,
         documentSymbolProvider: true,
         completionProvider: {
-          resolveProvider: true
+          resolveProvider: true,
+          // triggerCharacters: ['{{', '<', '@', 'this.']
         }
       }
     };
   }
 
   private onDidChangeContent(change: any) {
+    // this.setStatusText('did-change');
     this.templateLinter.lint(change.document);
   }
 
@@ -105,10 +120,15 @@ export default class Server {
     const completionItems = [];
 
     const templateCompletions = this.templateCompletionProvider.provideCompletions(textDocumentPosition);
-    completionItems.push(...templateCompletions);
-
+    const scriptCompletions = this.scriptCompletionProvider.provideCompletions(textDocumentPosition);
+    completionItems.push(...templateCompletions, ...scriptCompletions);
+    // this.setStatusText('Running');
     return completionItems;
   }
+
+  // public setStatusText(text: string) {
+    // this.connection.sendNotification('els.setStatusBarText', [text]);
+  // }
 
   private onDocumentSymbol(params: DocumentSymbolParams): SymbolInformation[] {
     let uri = params.textDocument.uri;

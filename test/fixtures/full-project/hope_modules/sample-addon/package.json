@@ -1,0 +1,10 @@
+{
+    "name": "sample-addon",
+    "keywords": [
+      "ember-addon"
+    ],
+    "dependencies": {
+        "related-to-sample-addon": "*",
+        "sample-addon": "*"
+    }
+  }

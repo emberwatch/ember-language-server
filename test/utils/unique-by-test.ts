@@ -1,4 +1,4 @@
-import uniqueBy from '../src/utils/unique-by';
+import uniqueBy from '../../src/utils/unique-by';
 
 describe('unique-by', function() {
   it('should filter out objects with the same primitive value of a given property', function() {

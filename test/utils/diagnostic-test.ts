@@ -1,10 +1,10 @@
 import { DiagnosticSeverity } from 'vscode-languageserver';
-import { toDiagnostic } from '../src/utils/diagnostic';
+import { toDiagnostic } from '../../src/utils/diagnostic';
 
 describe('diagnostic-utils', function() {
   describe('toDiagnostic()', function() {
     it('converts handlebars parser errors', function() {
-      const { source, error } = require('./fixtures/dignostic/handlbars-parser-error.json');
+      const { source, error } = require('./../fixtures/dignostic/handlbars-parser-error.json');
 
       const diagnostic = toDiagnostic(source, error);
 
@@ -18,7 +18,7 @@ describe('diagnostic-utils', function() {
     });
 
     it('converts glimmer compiler errors', function() {
-      const { source, error } = require('./fixtures/dignostic/glimmer-compiler-error.json');
+      const { source, error } = require('./../fixtures/dignostic/glimmer-compiler-error.json');
 
       const diagnostic = toDiagnostic(source, error);
 
@@ -32,7 +32,7 @@ describe('diagnostic-utils', function() {
     });
 
     it('converts unclosed element errors', function() {
-      const { source, error } = require('./fixtures/dignostic/non-translated-error.json');
+      const { source, error } = require('./../fixtures/dignostic/non-translated-error.json');
 
       const diagnostic = toDiagnostic(source, error);
 

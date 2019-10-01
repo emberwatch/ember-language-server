@@ -1,6 +1,7 @@
 import { Diagnostic, Files, TextDocument } from 'vscode-languageserver';
-import { hasExtension } from './utils/file-extension';
+import { getExtension } from './utils/file-extension';
 import { toDiagnostic } from './utils/diagnostic';
+import { searchAndExtractHbs } from 'extract-tagged-template-literals';
 
 import * as path from 'path';
 import * as fs from 'fs';
@@ -19,6 +20,8 @@ export interface TemplateLinterError {
   source?: string;
 }
 
+const extensionsToLint: string[] = ['.hbs', '.js', '.ts'];
+
 export default class TemplateLinter {
 
   private _linterCache = new Map<Project, any>();
@@ -26,7 +29,9 @@ export default class TemplateLinter {
   constructor(private server: Server) {}
 
   async lint(textDocument: TextDocument) {
-    if (!hasExtension(textDocument, '.hbs')) {
+    const ext = getExtension(textDocument);
+
+    if (!extensionsToLint.includes(ext)) {
       return;
     }
 
@@ -37,9 +42,16 @@ export default class TemplateLinter {
     }
 
     const TemplateLinter = await this.getLinter(textDocument.uri);
-    const linter = new TemplateLinter(config);
 
-    const source = textDocument.getText();
+    let linter = null;
+    try {
+      linter = new TemplateLinter(config);
+    } catch (e) {
+      return;
+    }
+
+    const documentContent = textDocument.getText();
+    const source = (ext === '.hbs') ? documentContent : searchAndExtractHbs(documentContent);
 
     const errors = linter.verify({
       source,
@@ -78,7 +90,15 @@ export default class TemplateLinter {
     }
 
     try {
-      const linter = await (Files.resolveModule(project.root, 'ember-template-lint') as Promise<any>);
+      const nodePath = Files.resolveGlobalNodePath();
+      if (!nodePath) {
+        return;
+      }
+      const linterPath = await (Files.resolveModulePath(project.root, 'ember-template-lint', nodePath, () => {}) as Promise<any>);
+      if (!linterPath) {
+        return;
+      }
+      const linter = require(linterPath);
       this._linterCache.set(project, linter);
       return linter;
     } catch (error) {

@@ -1,5 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`integration Completion request returns all angle-bracket in a element expression 1`] = `
+Array [
+  Object {
+    "detail": "component",
+    "kind": 7,
+    "label": "AnotherAwesomeComponent",
+  },
+  Object {
+    "detail": "component",
+    "kind": 7,
+    "label": "MyAwesomeComponent",
+  },
+]
+`;
+
 exports[`integration Completion request returns all components and helpers when requesting completion items in a handlebars expression 1`] = `
 Array [
   Object {
@@ -180,12 +195,22 @@ Array [
   Object {
     "detail": "route",
     "kind": 17,
-    "label": "nested.nested-route",
+    "label": "angle-completion",
+  },
+  Object {
+    "detail": "route",
+    "kind": 17,
+    "label": "definition",
   },
   Object {
     "detail": "route",
     "kind": 17,
     "label": "test-route",
+  },
+  Object {
+    "detail": "route",
+    "kind": 17,
+    "label": "nested.nested-route",
   },
 ]
 `;
@@ -195,12 +220,22 @@ Array [
   Object {
     "detail": "route",
     "kind": 17,
-    "label": "nested.nested-route",
+    "label": "angle-completion",
+  },
+  Object {
+    "detail": "route",
+    "kind": 17,
+    "label": "definition",
   },
   Object {
     "detail": "route",
     "kind": 17,
     "label": "test-route",
+  },
+  Object {
+    "detail": "route",
+    "kind": 17,
+    "label": "nested.nested-route",
   },
 ]
 `;

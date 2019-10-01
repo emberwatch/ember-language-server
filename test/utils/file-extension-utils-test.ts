@@ -1,4 +1,4 @@
-import { getExtension, hasExtension } from '../src/utils/file-extension';
+import { getExtension, hasExtension } from '../../src/utils/file-extension';
 
 describe('file-extension-utils', function() {
 
