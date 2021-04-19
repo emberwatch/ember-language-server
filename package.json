@@ -23,7 +23,7 @@
     "fs-extra": "^5.0.0",
     "fuzzaldrin": "^2.1.0",
     "i": "^0.3.5",
-    "vscode-languageserver": "^4.1.2",
+    "vscode-languageserver": "^6.1.1",
     "vscode-uri": "^2.1.1",
     "walk-sync": "^2.1.0"
   },
