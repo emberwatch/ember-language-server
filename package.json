@@ -40,7 +40,7 @@
     "tslint": "^5.20.1",
     "typescript": "^2.8.1",
     "vscode-jsonrpc": "^3.6.1",
-    "vscode-languageserver-protocol": "^3.7.1"
+    "vscode-languageserver-protocol": "^3.15.3"
   },
   "scripts": {
     "changelog": "lerna-changelog",
