@@ -36,7 +36,7 @@
     "jest": "^23.6.0",
     "lerna-changelog": "^0.8.3",
     "rimraf": "^3.0.2",
-    "ts-jest": "^22.4.3",
+    "ts-jest": "^23.10.5",
     "tslint": "^5.20.1",
     "typescript": "^2.8.1",
     "vscode-jsonrpc": "^3.6.1",
